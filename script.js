@@ -5,6 +5,8 @@ const dateInput = document.getElementById("date");
 
 const addExpenseButton = document.getElementById("addExpense");
 
+let expenses = [];
+
 addExpenseButton.addEventListener("click", function () {
 
     const description = descriptionInput.value;
@@ -19,5 +21,33 @@ addExpenseButton.addEventListener("click", function () {
         date: date
     };
 
-    console.log(expense);
+    expenses.push(expense);
+
+    displayExpenses();
+
 });
+
+function displayExpenses() {
+
+    const expensesContainer = document.getElementById("expenses");
+
+    expensesContainer.innerHTML = "";
+
+    expenses.forEach(function (expense) {
+
+        const expenseElement = document.createElement("div");
+
+        expenseElement.innerHTML = `
+            <p>
+                <strong>${expense.description}</strong>
+                - KES ${expense.amount}
+                - ${expense.category}
+                - ${expense.date}
+            </p>
+        `;
+
+        expensesContainer.appendChild(expenseElement);
+
+    });
+
+}
