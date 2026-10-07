@@ -30,10 +30,15 @@ addExpenseButton.addEventListener("click", function () {
 function displayExpenses() {
 
     const expensesContainer = document.getElementById("expenses");
+    const totalAmountElement = document.getElementById("totalAmount");
 
     expensesContainer.innerHTML = "";
 
+    let total = 0;
+
     expenses.forEach(function (expense) {
+
+        total += Number(expense.amount);
 
         const expenseElement = document.createElement("div");
 
@@ -49,5 +54,7 @@ function displayExpenses() {
         expensesContainer.appendChild(expenseElement);
 
     });
+
+    totalAmountElement.textContent = total;
 
 }
