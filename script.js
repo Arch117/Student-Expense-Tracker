@@ -63,7 +63,7 @@ function displayExpenses() {
 
     let total = 0;
 
-    expenses.forEach(function (expense) {
+    expenses.forEach(function (expense, index) {
 
         total += Number(expense.amount);
 
@@ -75,6 +75,8 @@ function displayExpenses() {
                 - KES ${expense.amount}
                 - ${expense.category}
                 - ${expense.date}
+
+                <button onclick="deleteExpense(${index})">Delete</button>
             </p>
         `;
 
@@ -87,3 +89,13 @@ function displayExpenses() {
 }
 
 displayExpenses();
+
+function deleteExpense(index) {
+
+    expenses.splice(index, 1);
+
+    localStorage.setItem("expenses", JSON.stringify(expenses));
+
+    displayExpenses();
+
+}
