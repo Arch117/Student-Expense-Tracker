@@ -1,6 +1,6 @@
 body {
     font-family: Arial, sans-serif;
-    background-color: #214870;
+    background-color: #658aae;
     margin: 0;
     padding: 40px;
 }
@@ -16,7 +16,7 @@ p {
 .expense-form {
     max-width: 500px;
     margin: 30px auto;
-    background: rgb(73, 214, 48);
+    background: rgb(88, 168, 222);
     padding: 25px;
     border-radius: 10px;
 }
