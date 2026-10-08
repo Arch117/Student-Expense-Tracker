@@ -70,14 +70,29 @@ function displayExpenses() {
         const expenseElement = document.createElement("div");
 
         expenseElement.innerHTML = `
-            <p>
-                <strong>${expense.description}</strong>
-                - KES ${expense.amount}
-                - ${expense.category}
-                - ${expense.date}
+            <div class="expense-card">
 
-                <button onclick="deleteExpense(${index})">Delete</button>
-            </p>
+                <div class="expense-info">
+
+                    <h3>${expense.description}</h3>
+
+                    <p>${expense.category}</p>
+
+                    <small>${expense.date}</small>
+
+                </div>
+
+                <div class="expense-right">
+
+                    <strong>KES ${expense.amount}</strong>
+
+                    <button onclick="deleteExpense(${index})">
+                        Delete
+                    </button>
+
+                </div>
+
+            </div>
         `;
 
         expensesContainer.appendChild(expenseElement);

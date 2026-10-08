@@ -43,3 +43,52 @@ button {
     margin-top: 20px;
     cursor: pointer;
 }
+
+.expense-list {
+    max-width: 500px;
+    margin: 30px auto;
+}
+
+.expense-card {
+    background-color: white;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.expense-info h3 {
+    margin: 0 0 5px 0;
+}
+
+.expense-info p {
+    margin: 0 0 5px 0;
+    text-align: left;
+}
+
+.expense-info small {
+    color: #666;
+}
+
+.expense-right {
+    text-align: right;
+}
+
+.expense-right strong {
+    display: block;
+    margin-bottom: 8px;
+}
+
+.expense-right button {
+    width: auto;
+    padding: 6px 10px;
+}
+
+.expense-list h3 {
+    background-color: white;
+    padding: 15px;
+    border-radius: 10px;
+}
