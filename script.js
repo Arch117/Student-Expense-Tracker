@@ -5,7 +5,7 @@ const dateInput = document.getElementById("date");
 
 const addExpenseButton = document.getElementById("addExpense");
 
-let expenses = [];
+let expenses = JSON.parse(localStorage.getItem("expenses")) || [];
 
 addExpenseButton.addEventListener("click", function () {
 
@@ -22,6 +22,8 @@ addExpenseButton.addEventListener("click", function () {
     };
 
     expenses.push(expense);
+
+    localStorage.setItem("expenses", JSON.stringify(expenses));
 
     displayExpenses();
 
@@ -58,3 +60,5 @@ function displayExpenses() {
     totalAmountElement.textContent = total;
 
 }
+
+displayExpenses();
