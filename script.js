@@ -9,10 +9,30 @@ let expenses = JSON.parse(localStorage.getItem("expenses")) || [];
 
 addExpenseButton.addEventListener("click", function () {
 
-    const description = descriptionInput.value;
-    const amount = amountInput.value;
+    const description = descriptionInput.value.trim();
+    const amount = Number(amountInput.value);
     const category = categoryInput.value;
     const date = dateInput.value;
+
+    if (description === "") {
+        alert("Please enter a description.");
+        return;
+    }
+
+    if (amount <= 0) {
+        alert("Please enter an amount greater than 0.");
+        return;
+    }
+
+    if (category === "") {
+        alert("Please select a category.");
+        return;
+    }
+
+    if (date === "") {
+        alert("Please select a date.");
+        return;
+    }
 
     const expense = {
         description: description,
@@ -26,6 +46,11 @@ addExpenseButton.addEventListener("click", function () {
     localStorage.setItem("expenses", JSON.stringify(expenses));
 
     displayExpenses();
+
+    descriptionInput.value = "";
+    amountInput.value = "";
+    categoryInput.value = "";
+    dateInput.value = "";
 
 });
 
