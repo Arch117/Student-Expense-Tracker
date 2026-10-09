@@ -51,16 +51,24 @@ addExpenseButton.addEventListener("click", function () {
         date: date
     };
 
-    expenses.push(expense);
+    try {
+        expenses.push(expense);
 
-    localStorage.setItem("expenses", JSON.stringify(expenses));
+        localStorage.setItem("expenses", JSON.stringify(expenses));
 
-    displayExpenses();
+        displayExpenses();
 
-    descriptionInput.value = "";
-    amountInput.value = "";
-    categoryInput.value = "";
-    dateInput.value = "";
+        alert("Expense recorded successfully! 🎉");
+
+        descriptionInput.value = "";
+        amountInput.value = "";
+        categoryInput.value = "";
+        dateInput.value = "";
+
+    } catch (error) {
+        expenses.pop();
+        alert("Unable to save the expense. Please try again.");
+    }
 
 });
 
