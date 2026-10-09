@@ -32,7 +32,15 @@ addExpenseButton.addEventListener("click", function () {
     }
 
     if (date === "") {
-        alert("Please select a date.");
+        alert("Please select a valid date.");
+        return;
+    }
+
+    const selectedDate = new Date(date + "T00:00:00");
+
+
+    if (date < "1900-01-01" || date > "2100-12-31") {
+        alert("Please select a date between 1900 and 2100.");
         return;
     }
 
