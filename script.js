@@ -3,6 +3,8 @@ const amountInput = document.getElementById("amount");
 const categoryInput = document.getElementById("category");
 const dateInput = document.getElementById("date");
 
+const filterCategory = document.getElementById("filterCategory");
+
 const addExpenseButton = document.getElementById("addExpense");
 
 let expenses = JSON.parse(localStorage.getItem("expenses")) || [];
@@ -63,7 +65,13 @@ function displayExpenses() {
 
     let total = 0;
 
-    expenses.forEach(function (expense, index) {
+    const filteredExpenses = filterCategory.value === "All"
+        ? expenses
+        : expenses.filter(function (expense) {
+            return expense.category === filterCategory.value;
+    });
+
+    filteredExpenses.forEach(function (expense) {
 
         total += Number(expense.amount);
 
@@ -86,10 +94,9 @@ function displayExpenses() {
 
                     <strong>KES ${expense.amount}</strong>
 
-                    <button onclick="deleteExpense(${index})">
+                    <button onclick="deleteExpense(${expenses.indexOf(expense)})">
                         Delete
                     </button>
-
                 </div>
 
             </div>
@@ -104,6 +111,8 @@ function displayExpenses() {
 }
 
 displayExpenses();
+
+filterCategory.addEventListener("change", displayExpenses);
 
 function deleteExpense(index) {
 
