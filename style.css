@@ -239,8 +239,8 @@ td:nth-child(4) {
 .delete-button {
     width: auto;
     padding: 7px 10px;
-    background: #fee2e2;
-    color: #b91c1c;
+    background: #feeaea;
+    color: #cc3e3e;
     border: none;
     border-radius: 6px;
     cursor: pointer;
