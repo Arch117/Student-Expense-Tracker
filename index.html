@@ -10,62 +10,92 @@
 </head>
 
 <body>
-    <!-- This is the main content area -->
-    <!-- All the important elements go here -->
+
+<header class="app-header">
     <h1>Student Expense Tracker</h1>
+    <p>Take control of your money.</p>
 
-      <p>Track where your money goes.</p>
+    <nav>
+        <button id="showAddSection">Add Expense</button>
+        <button id="showExpensesSection">My Expenses</button>
+    </nav>
+</header>
 
-       <div class="expense-form">
+<main>
+    <!-- SECTION 1: INPUT -->
+    <section id="addExpenseSection" class="page-section">
+        <div class="panel">
+            <h2>Record a New Expense</h2>
 
-    <h2>Add Expense</h2>
+            <label for="description">Description</label>
+            <input type="text" id="description"
+                   placeholder="e.g. Lunch">
 
-    <label for="description">Description</label>
-    <input type="text" id="description" placeholder="e.g. Lunch"><br><br>
+            <label for="amount">Amount (KES)</label>
+            <input type="number" id="amount"
+                   placeholder="e.g. 150" min="0.01" step="0.01">
 
-    <label for="amount">Amount (KES)</label>
-    <input type="number" id="amount" placeholder="e.g. 150"><br><br>
+            <label for="category">Category</label>
+            <select id="category">
+                <option value="">Select category</option>
+                <option value="Food">Food</option>
+                <option value="Transport">Transport</option>
+                <option value="School">School</option>
+                <option value="Entertainment">Entertainment</option>
+                <option value="Other">Other</option>
+            </select>
 
-    <label for="category">Category</label>
-    <select id="category">
-        <option value="">Select category</option>
-        <option value="Food">Food</option>
-        <option value="Transport">Transport</option>
-        <option value="School">School</option>
-        <option value="Entertainment">Entertainment</option>
-        <option value="Other">Other</option>
-    </select>
-    <br><br>
+            <label for="date">Date</label>
+            <input type="date" id="date">
 
-    <label for="date">Date</label>
-    <input type="date" id="date"> <br><br>
+            <button id="addExpense">Save Expense</button>
+        </div>
+    </section>
 
-    <button id="addExpense">Add Expense</button>
+    <!-- SECTION 2: RECORDS -->
+    <section id="expensesSection" class="page-section" hidden>
+        <div class="panel records-panel">
+            <h2>My Expenses</h2>
 
-</div>
-<!-- Add the expenses -->
- <div class="expense-list">
+            <div class="summary">
+                <span>Total for current view</span>
+                <strong>KES <span id="totalAmount">0.00</span></strong>
+                <small id="expenseCount">0 expenses</small>
+            </div>
 
-    <h2>My Expenses</h2>
+            <label for="filterCategory">Filter by category</label>
+            <select id="filterCategory">
+                <option value="All">All Categories</option>
+                <option value="Food">Food</option>
+                <option value="Transport">Transport</option>
+                <option value="School">School</option>
+                <option value="Entertainment">Entertainment</option>
+                <option value="Other">Other</option>
+            </select>
 
-    <h3>Total Spent: KES <span id="totalAmount">0</span></h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Description</th>
+                            <th>Category</th>
+                            <th>Amount (KES)</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="expenses"></tbody>
+                </table>
+            </div>
 
-    <label for="filterCategory">Filter by category</label>
+            <p id="emptyMessage" hidden>
+                No expenses found for this category.
+            </p>
+        </div>
+    </section>
+</main>
 
-    <select id="filterCategory">
-        <option value="All">All Categories</option>
-        <option value="Food">Food</option>
-        <option value="Transport">Transport</option>
-        <option value="School">School</option>
-        <option value="Entertainment">Entertainment</option>
-        <option value="Other">Other</option>
-    </select>
+<script src="script.js"></script>
 
-    <div id="expenses"></div>
-
-</div>
-
-
-    <script src="script.js"></script>
 </body>
 </html>

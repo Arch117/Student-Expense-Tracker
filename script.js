@@ -56,58 +56,80 @@ addExpenseButton.addEventListener("click", function () {
 
 });
 
-function displayExpenses() {
 
+function displayExpenses() {
     const expensesContainer = document.getElementById("expenses");
     const totalAmountElement = document.getElementById("totalAmount");
+    const expenseCountElement = document.getElementById("expenseCount");
+    const emptyMessage = document.getElementById("emptyMessage");
 
     expensesContainer.innerHTML = "";
 
-    let total = 0;
+    const selectedCategory = filterCategory.value;
 
-    const filteredExpenses = filterCategory.value === "All"
+    const filteredExpenses = selectedCategory === "All"
         ? expenses
         : expenses.filter(function (expense) {
-            return expense.category === filterCategory.value;
-    });
+            return expense.category === selectedCategory;
+        });
+
+    let total = 0;
 
     filteredExpenses.forEach(function (expense) {
-
         total += Number(expense.amount);
 
-        const expenseElement = document.createElement("div");
+        const row = document.createElement("tr");
 
-        expenseElement.innerHTML = `
-            <div class="expense-card">
+        const dateCell = document.createElement("td");
+        dateCell.textContent = expense.date;
 
-                <div class="expense-info">
+        const descriptionCell = document.createElement("td");
+        descriptionCell.textContent = expense.description;
 
-                    <h3>${expense.description}</h3>
+        const categoryCell = document.createElement("td");
+        categoryCell.textContent = expense.category;
 
-                    <p>${expense.category}</p>
+        const amountCell = document.createElement("td");
+        amountCell.textContent = Number(expense.amount).toLocaleString(
+            "en-KE",
+            { minimumFractionDigits: 2, maximumFractionDigits: 2 }
+        );
 
-                    <small>${expense.date}</small>
+        const actionCell = document.createElement("td");
+        const deleteButton = document.createElement("button");
 
-                </div>
+        deleteButton.textContent = "Delete";
+        deleteButton.className = "delete-button";
 
-                <div class="expense-right">
+        deleteButton.addEventListener("click", function () {
+            const actualIndex = expenses.indexOf(expense);
+            deleteExpense(actualIndex);
+        });
 
-                    <strong>KES ${expense.amount}</strong>
+        actionCell.appendChild(deleteButton);
 
-                    <button onclick="deleteExpense(${expenses.indexOf(expense)})">
-                        Delete
-                    </button>
-                </div>
+        row.append(
+            dateCell,
+            descriptionCell,
+            categoryCell,
+            amountCell,
+            actionCell
+        );
 
-            </div>
-        `;
-
-        expensesContainer.appendChild(expenseElement);
-
+        expensesContainer.appendChild(row);
     });
 
-    totalAmountElement.textContent = total;
+    totalAmountElement.textContent = total.toLocaleString("en-KE", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
 
+    expenseCountElement.textContent =
+        filteredExpenses.length + (
+            filteredExpenses.length === 1 ? " expense" : " expenses"
+        );
+
+    emptyMessage.hidden = filteredExpenses.length !== 0;
 }
 
 displayExpenses();
@@ -123,3 +145,18 @@ function deleteExpense(index) {
     displayExpenses();
 
 }
+
+
+const addSection = document.getElementById("addExpenseSection");
+const recordsSection = document.getElementById("expensesSection");
+
+document.getElementById("showAddSection").addEventListener("click", function () {
+    recordsSection.hidden = true;
+    addSection.hidden = false;
+});
+
+document.getElementById("showExpensesSection").addEventListener("click", function () {
+    addSection.hidden = true;
+    recordsSection.hidden = false;
+    displayExpenses();
+});
