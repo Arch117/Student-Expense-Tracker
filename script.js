@@ -50,7 +50,7 @@ addExpenseButton.addEventListener("click", function () {
     };
 
     try {
-        expenses.push(expense);
+        expenses.unshift(expense);
 
         localStorage.setItem("expenses", JSON.stringify(expenses));
 
