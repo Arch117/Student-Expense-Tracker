@@ -95,6 +95,36 @@
     </section>
 </main>
 
+
+<!-- SUCCESS POPUP -->
+<div id="successModal" class="modal-overlay" hidden>
+    <div class="success-modal"
+         role="dialog"
+         aria-modal="true"
+         aria-labelledby="successTitle"
+         aria-describedby="successMessage">
+
+        <div class="success-icon" aria-hidden="true">✓</div>
+
+        <h2 id="successTitle">Expense Recorded!</h2>
+
+        <p id="successMessage">
+            Your expense has been saved successfully.
+        </p>
+
+        <div class="modal-actions">
+            <button id="viewExpensesButton" type="button">
+                View Expenses
+            </button>
+
+            <button id="addAnotherButton" type="button">
+                Add Another Expense
+            </button>
+        </div>
+    </div>
+</div>
+
+
 <script src="script.js"></script>
 
 </body>

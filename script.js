@@ -7,6 +7,12 @@ const filterCategory = document.getElementById("filterCategory");
 
 const addExpenseButton = document.getElementById("addExpense");
 
+
+const successModal = document.getElementById("successModal");
+const viewExpensesButton = document.getElementById("viewExpensesButton");
+const addAnotherButton = document.getElementById("addAnotherButton");
+
+
 let expenses = JSON.parse(localStorage.getItem("expenses")) || [];
 
 addExpenseButton.addEventListener("click", function () {
@@ -54,14 +60,19 @@ addExpenseButton.addEventListener("click", function () {
 
         localStorage.setItem("expenses", JSON.stringify(expenses));
 
-        displayExpenses();
+        
+    displayExpenses();
 
-        alert("Expense recorded successfully! 🎉");
+    // Clear the form after saving
+    descriptionInput.value = "";
+    amountInput.value = "";
+    categoryInput.value = "";
+    dateInput.value = "";
 
-        descriptionInput.value = "";
-        amountInput.value = "";
-        categoryInput.value = "";
-        dateInput.value = "";
+    // Display the custom success popup
+    successModal.hidden = false;
+    viewExpensesButton.focus();
+
 
     } catch (error) {
         expenses.pop();
@@ -173,4 +184,19 @@ document.getElementById("showExpensesSection").addEventListener("click", functio
     addSection.hidden = true;
     recordsSection.hidden = false;
     displayExpenses();
+});
+
+
+viewExpensesButton.addEventListener("click", function () {
+    successModal.hidden = true;
+
+    addSection.hidden = true;
+    recordsSection.hidden = false;
+
+    displayExpenses();
+});
+
+addAnotherButton.addEventListener("click", function () {
+    successModal.hidden = true;
+    descriptionInput.focus();
 });
