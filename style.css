@@ -232,8 +232,8 @@ tbody tr:hover {
 }
 
 /* Align the Amount heading and its values */
-th:nth-child(4),
-td:nth-child(4) {
+th:nth-child(5),
+td:nth-child(5) {
     text-align: left;
     font-variant-numeric: tabular-nums;
 }

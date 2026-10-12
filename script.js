@@ -48,12 +48,23 @@ addExpenseButton.addEventListener("click", function () {
         return;
     }
 
+    
+    const now = new Date();
+
+    const recordedDate = [
+        now.getFullYear(),
+        String(now.getMonth() + 1).padStart(2, "0"),
+        String(now.getDate()).padStart(2, "0")
+    ].join("-");
+
     const expense = {
+        recordedDate: recordedDate,
         description: description,
         amount: amount,
         category: category,
         date: date
     };
+
 
     try {
         expenses.unshift(expense);
@@ -105,8 +116,13 @@ function displayExpenses() {
 
         const row = document.createElement("tr");
 
+        
+        const recordedDateCell = document.createElement("td");
+        recordedDateCell.textContent = expense.recordedDate || "—";
+
         const dateCell = document.createElement("td");
         dateCell.textContent = expense.date;
+
 
         const descriptionCell = document.createElement("td");
         descriptionCell.textContent = expense.description;
@@ -133,13 +149,16 @@ function displayExpenses() {
 
         actionCell.appendChild(deleteButton);
 
+        
         row.append(
+            recordedDateCell,
             dateCell,
             descriptionCell,
             categoryCell,
             amountCell,
             actionCell
         );
+
 
         expensesContainer.appendChild(row);
     });
