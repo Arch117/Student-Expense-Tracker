@@ -15,10 +15,13 @@
     <h1>Student Expense Tracker</h1>
     <p>Take control of your money.</p>
 
+
     <nav>
         <button id="showAddSection">Add Expense</button>
         <button id="showExpensesSection">My Expenses</button>
+        <button id="showAboutButton">About Developer</button>
     </nav>
+
 </header>
 
 <main>
@@ -120,6 +123,85 @@
 
             <button id="addAnotherButton" type="button">
                 Add Another Expense
+            </button>
+        </div>
+    </div>
+</div>
+
+
+<!-- ABOUT DEVELOPER POPUP -->
+<div id="aboutModal" class="modal-overlay" hidden>
+    <div class="success-modal about-modal"
+         role="dialog"
+         aria-modal="true"
+         aria-labelledby="aboutTitle">
+
+        <h2 id="aboutTitle">About <br><b>Student Expense Tracker</b></h2>
+
+        <p style="text-align: center;">Take control of your money.</p>
+
+        <h3>About the Application</h3>
+        <p>
+            A simple expense management application that helps
+            users record, organize, and monitor their daily spending.
+        </p>
+
+        <h3>Technologies Used</h3>
+        <ul>
+            <li>HTML5 — application structure</li>
+            <li>CSS3 — styling and responsive layout</li>
+            <li>JavaScript — application functionality</li>
+            <li>Browser localStorage — local data persistence</li>
+        </ul>
+
+        <h3>Privacy and Data Safety</h3>
+        <p>
+            Expense records are stored locally in your browser.
+            This application does not currently require an account
+            or use a dedicated server to store your records.
+            Browser storage is not encrypted by this application.
+            People with access to your browser profile may be able
+            to access your records. Clearing browser data may
+            permanently remove them.
+        </p>
+
+        <h3>Meet the Developer</h3>
+        <p>
+            <strong>Archimedes Cheruiyot</strong><br>
+            Student Developer | Bachelor of Business Information Technology | JKUAT
+        </p>
+
+        <p>
+            This project applies practical web development skills
+            to an everyday financial management challenge.
+            My interests include software engineering, modern
+            technologies, and financial technology.
+        </p>
+
+        <p>
+            GitHub:
+            <a href="https://github.com/Arch117"
+               target="_blank"
+               rel="noopener noreferrer">
+                github.com/Arch117
+            </a>
+        </p>
+
+        <h3>Project Information</h3>
+        <p>
+            Version: 1.0.0<br>
+            Developer: Archimedes Cheruiyot<br>
+            Built with HTML, CSS, and JavaScript.
+        </p>
+
+        <p>
+            <i>Built with curiosity, dedication, and a commitment
+            to continuous learning.</i>
+        </p>
+
+        <div class="modal-actions">
+            <button id="aboutCloseButton" type="button">
+                Close
             </button>
         </div>
     </div>

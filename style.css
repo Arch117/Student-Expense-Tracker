@@ -396,3 +396,45 @@ td:nth-child(5) {
         padding: 22px;
     }
 }
+
+
+/* About Developer popup */
+.about-modal {
+    max-height: 85vh;
+    overflow-y: auto;
+    text-align: left;
+}
+
+.about-modal h2 {
+    text-align: center;
+    line-height: 1.4;
+}
+
+.about-modal h3 {
+    color: #163b72;
+    margin: 22px 0 8px;
+}
+
+.about-modal p {
+    text-align: left;
+    line-height: 1.6;
+}
+
+.about-modal ul {
+    padding-left: 22px;
+    line-height: 1.8;
+}
+
+.about-modal a {
+    color: #1d4ed8;
+    overflow-wrap: anywhere;
+}
+
+#aboutCloseButton {
+    background: #1d4ed8;
+    color: white;
+}
+
+#aboutCloseButton:hover {
+    background: #163b72;
+}

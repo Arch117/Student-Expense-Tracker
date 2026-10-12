@@ -240,3 +240,36 @@ addAnotherButton.addEventListener("click", function () {
     successModal.hidden = true;
     descriptionInput.focus();
 });
+
+
+const aboutModal = document.getElementById("aboutModal");
+const showAboutButton = document.getElementById("showAboutButton");
+const aboutCloseButton = document.getElementById("aboutCloseButton");
+
+// Open the About Developer popup
+showAboutButton.addEventListener("click", function () {
+    aboutModal.hidden = false;
+    aboutCloseButton.focus();
+});
+
+// Close the popup
+aboutCloseButton.addEventListener("click", function () {
+    aboutModal.hidden = true;
+    showAboutButton.focus();
+});
+
+// Close when clicking outside the popup
+aboutModal.addEventListener("click", function (event) {
+    if (event.target === aboutModal) {
+        aboutModal.hidden = true;
+        showAboutButton.focus();
+    }
+});
+
+// Close when the Escape key is pressed
+document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape" && !aboutModal.hidden) {
+        aboutModal.hidden = true;
+        showAboutButton.focus();
+    }
+});
