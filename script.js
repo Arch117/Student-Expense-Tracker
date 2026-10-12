@@ -172,17 +172,36 @@ function deleteExpense(index) {
 }
 
 
+
 const addSection = document.getElementById("addExpenseSection");
 const recordsSection = document.getElementById("expensesSection");
 
+// Restore the last section viewed after a page refresh
+const savedSection = localStorage.getItem("activeSection");
+
+if (savedSection === "expenses") {
+    addSection.hidden = true;
+    recordsSection.hidden = false;
+} else {
+    addSection.hidden = false;
+    recordsSection.hidden = true;
+}
+
+// Show the Add Expense section and remember the choice
 document.getElementById("showAddSection").addEventListener("click", function () {
     recordsSection.hidden = true;
     addSection.hidden = false;
+
+    localStorage.setItem("activeSection", "add");
 });
 
+// Show the My Expenses section and remember the choice
 document.getElementById("showExpensesSection").addEventListener("click", function () {
     addSection.hidden = true;
     recordsSection.hidden = false;
+
+    localStorage.setItem("activeSection", "expenses");
+
     displayExpenses();
 });
 
@@ -192,6 +211,8 @@ viewExpensesButton.addEventListener("click", function () {
 
     addSection.hidden = true;
     recordsSection.hidden = false;
+
+    localStorage.setItem("activeSection", "expenses");
 
     displayExpenses();
 });
