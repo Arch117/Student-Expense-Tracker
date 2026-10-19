@@ -562,6 +562,7 @@ td:nth-child(5) {
     margin: 3px;
     border-radius: 6px;
     cursor: pointer;
+    width: 40%;
 }
 
 .edit-button:hover {
@@ -571,4 +572,127 @@ td:nth-child(5) {
 /* Keep both action buttons easy to use */
 .delete-button {
     margin: 3px;
+}
+
+
+/* Delete confirmation popup */
+.delete-confirm-modal {
+    width: 100%;
+    max-width: 440px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-sizing: border-box;
+}
+
+.delete-expense-details {
+    margin: 18px 0;
+    padding: 12px 16px;
+    background: #f1f5f9;
+    border-radius: 8px;
+    text-align: left;
+    overflow-wrap: anywhere;
+}
+
+.delete-expense-details p {
+    margin: 8px 0;
+    line-height: 1.5;
+}
+
+.delete-warning {
+    color: #b91c1c;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.delete-confirm-actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.delete-confirm-actions button {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+#confirmDeleteButton {
+    background: #dc2626;
+    color: white;
+}
+
+#confirmDeleteButton:hover {
+    background: #b91c1c;
+}
+
+#cancelDeleteButton {
+    background: #e2e8f0;
+    color: #1e293b;
+}
+
+#cancelDeleteButton:hover {
+    background: #cbd5e1;
+}
+
+/* Temporary Undo notification */
+.undo-notification {
+    position: fixed;
+    z-index: 3000;
+    left: 50%;
+    bottom: 24px;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    width: max-content;
+    max-width: calc(100% - 32px);
+    box-sizing: border-box;
+    padding: 12px 16px;
+    background: #1e293b;
+    color: white;
+    border-radius: 8px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+    font-size: 14px;
+}
+
+.undo-notification[hidden] {
+    display: none;
+}
+
+#undoDeleteButton {
+    border: none;
+    background: transparent;
+    color: #93c5fd;
+    font-weight: bold;
+    text-decoration: underline;
+    cursor: pointer;
+    padding: 4px;
+}
+
+#undoDeleteButton:hover {
+    color: white;
+}
+
+#undoCountdown {
+    color: #cbd5e1;
+    font-size: 12px;
+}
+
+@media (max-width: 500px) {
+    .delete-confirm-actions {
+        flex-direction: column;
+    }
+
+    .delete-confirm-actions button {
+        width: 100%;
+    }
+
+    .undo-notification {
+        bottom: 16px;
+    }
 }

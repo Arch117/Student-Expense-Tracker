@@ -268,6 +268,56 @@
     </div>
 </div>
 
+<!-- DELETE CONFIRMATION MODAL -->
+<div id="deleteConfirmModal" class="modal-overlay" hidden>
+    <div class="success-modal delete-confirm-modal"
+         role="dialog"
+         aria-modal="true"
+         aria-labelledby="deleteConfirmTitle">
+
+        <h2 id="deleteConfirmTitle">Delete this expense?</h2>
+        <p>Please review the expense before confirming deletion.</p>
+
+        <div class="delete-expense-details">
+            <p><strong>Description:</strong>
+                <span id="deleteDescription"></span>
+            </p>
+            <p><strong>Amount:</strong>
+                KES <span id="deleteAmount"></span>
+            </p>
+            <p><strong>Category:</strong>
+                <span id="deleteCategory"></span>
+            </p>
+            <p><strong>Date Spent:</strong>
+                <span id="deleteDate"></span>
+            </p>
+        </div>
+
+        <p class="delete-warning">
+            This expense will be removed from your records.
+            You will have 5 seconds to undo the deletion.
+        </p>
+
+        <div class="delete-confirm-actions">
+            <button type="button" id="confirmDeleteButton">
+                Yes, Delete
+            </button>
+            <button type="button" id="cancelDeleteButton">
+                Cancel
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- UNDO DELETION NOTIFICATION -->
+<div id="undoNotification" class="undo-notification"
+     role="status" aria-live="polite" hidden>
+    <span>Expense deleted.</span>
+    <button type="button" id="undoDeleteButton">Undo</button>
+    <span id="undoCountdown">5s</span>
+</div>
+
+
 <script src="script.js"></script>
 
 </body>

@@ -27,6 +27,23 @@ const cancelEditButton = document.getElementById("cancelEditButton");
 let expenses = JSON.parse(localStorage.getItem("expenses")) || [];
 let editingExpenseIndex = null;
 
+const deleteConfirmModal = document.getElementById("deleteConfirmModal");
+const deleteDescription = document.getElementById("deleteDescription");
+const deleteAmount = document.getElementById("deleteAmount");
+const deleteCategory = document.getElementById("deleteCategory");
+const deleteDate = document.getElementById("deleteDate");
+
+const confirmDeleteButton = document.getElementById("confirmDeleteButton");
+const cancelDeleteButton = document.getElementById("cancelDeleteButton");
+
+const undoNotification = document.getElementById("undoNotification");
+const undoDeleteButton = document.getElementById("undoDeleteButton");
+const undoCountdown = document.getElementById("undoCountdown");
+
+let pendingDeleteIndex = null;
+let pendingUndo = null;
+let undoTimer = null;
+let countdownTimer = null;
 
 // Save expenses to browser storage
 function saveExpenses() {
@@ -182,13 +199,15 @@ function displayExpenses() {
         deleteButton.className = "delete-button";
         deleteButton.type = "button";
 
+        
         deleteButton.addEventListener("click", function () {
             const actualIndex = expenses.indexOf(expense);
 
             if (actualIndex !== -1) {
-                deleteExpense(actualIndex);
+                openDeleteConfirmation(actualIndex);
             }
         });
+
 
         actionCell.append(editButton, deleteButton);
 
@@ -366,26 +385,167 @@ editExpenseModal.addEventListener("click", function (event) {
     }
 });
 
+/* Open the delete confirmation popup */
+function openDeleteConfirmation(index) {
+    const expense = expenses[index];
 
-// Delete an expense
-function deleteExpense(index) {
-    if (index < 0 || index >= expenses.length) {
+    if (!expense) {
         return;
     }
 
-    const deletedExpense = expenses.splice(index, 1)[0];
+    pendingDeleteIndex = index;
+
+    deleteDescription.textContent = expense.description;
+    deleteAmount.textContent = Number(expense.amount).toLocaleString(
+        "en-KE",
+        { minimumFractionDigits: 2, maximumFractionDigits: 2 }
+    );
+    deleteCategory.textContent = expense.category;
+    deleteDate.textContent = expense.date;
+
+    deleteConfirmModal.hidden = false;
+    confirmDeleteButton.focus();
+}
+
+
+/* Close the confirmation popup without deleting */
+function closeDeleteConfirmation() {
+    deleteConfirmModal.hidden = true;
+    pendingDeleteIndex = null;
+}
+
+
+/* Confirm and perform the deletion */
+function confirmDeleteExpense() {
+    const index = pendingDeleteIndex;
+
+    if (index === null || !expenses[index]) {
+        closeDeleteConfirmation();
+        return;
+    }
+
+    const deletedExpense = expenses[index];
+
+    // Finish any previous undo opportunity before starting another.
+    clearUndoTimers();
+    pendingUndo = null;
+    undoNotification.hidden = true;
+
+    // Remove the selected expense.
+    expenses.splice(index, 1);
 
     try {
         saveExpenses();
     } catch (error) {
+        // Restore the expense if browser storage cannot be updated.
         expenses.splice(index, 0, deletedExpense);
+
         alert("Unable to delete the expense. Please try again.");
+        displayExpenses();
+        closeDeleteConfirmation();
         return;
     }
+
+    closeDeleteConfirmation();
+    displayExpenses();
+
+    // Remember the deleted expense and its original position.
+    pendingUndo = {
+        expense: deletedExpense,
+        index: index
+    };
+
+    undoNotification.querySelector("span").textContent =
+        "Expense deleted.";
+    undoNotification.hidden = false;
+    undoDeleteButton.disabled = false;
+    undoCountdown.textContent = "5s";
+
+    let secondsLeft = 5;
+
+    countdownTimer = setInterval(function () {
+        secondsLeft -= 1;
+
+        if (secondsLeft > 0) {
+            undoCountdown.textContent = secondsLeft + "s";
+        }
+    }, 1000);
+
+    undoTimer = setTimeout(function () {
+        finishUndoWindow();
+    }, 5000);
+}
+
+
+/* Stop the countdown and expiration timer */
+function clearUndoTimers() {
+    if (undoTimer !== null) {
+        clearTimeout(undoTimer);
+        undoTimer = null;
+    }
+
+    if (countdownTimer !== null) {
+        clearInterval(countdownTimer);
+        countdownTimer = null;
+    }
+}
+
+
+/* End the undo opportunity */
+function finishUndoWindow() {
+    clearUndoTimers();
+    pendingUndo = null;
+    undoNotification.hidden = true;
+}
+
+
+/* Undo the most recent deletion */
+function undoDelete() {
+    if (!pendingUndo) {
+        return;
+    }
+
+    const deletedItem = pendingUndo;
+
+    clearUndoTimers();
+
+    // Restore the expense at its previous position.
+    const restoreIndex = Math.min(deletedItem.index, expenses.length);
+
+    expenses.splice(restoreIndex, 0, deletedItem.expense);
+
+    try {
+        saveExpenses();
+    } catch (error) {
+        // Return to the deleted state if storage saving fails.
+        expenses.splice(restoreIndex, 1);
+
+        alert("Unable to undo the deletion. Please try again.");
+        displayExpenses();
+        return;
+    }
+
+    pendingUndo = null;
+    undoNotification.hidden = true;
 
     displayExpenses();
 }
 
+
+/* Wire up the confirmation and undo buttons */
+confirmDeleteButton.addEventListener("click", confirmDeleteExpense);
+
+cancelDeleteButton.addEventListener("click", closeDeleteConfirmation);
+
+undoDeleteButton.addEventListener("click", undoDelete);
+
+
+/* Clicking outside the confirmation popup cancels deletion */
+deleteConfirmModal.addEventListener("click", function (event) {
+    if (event.target === deleteConfirmModal) {
+        closeDeleteConfirmation();
+    }
+});
 
 // Restore the last section viewed after a page refresh
 const addSection = document.getElementById("addExpenseSection");
@@ -467,16 +627,19 @@ aboutModal.addEventListener("click", function (event) {
 
 // Escape closes open modals
 document.addEventListener("keydown", function (event) {
-    if (event.key === "Escape") {
-        if (!editExpenseModal.hidden) {
-            closeEditModal();
-        } else if (!aboutModal.hidden) {
-            aboutModal.hidden = true;
-            showAboutButton.focus();
-        }
+    if (event.key !== "Escape") {
+        return;
+    }
+
+    if (!deleteConfirmModal.hidden) {
+        closeDeleteConfirmation();
+    } else if (!editExpenseModal.hidden) {
+        closeEditModal();
+    } else if (!aboutModal.hidden) {
+        aboutModal.hidden = true;
+        showAboutButton.focus();
     }
 });
-
 
 // Display the existing records on startup
 displayExpenses();
