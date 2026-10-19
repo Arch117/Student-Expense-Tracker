@@ -1,22 +1,41 @@
+
 const descriptionInput = document.getElementById("description");
 const amountInput = document.getElementById("amount");
 const categoryInput = document.getElementById("category");
 const dateInput = document.getElementById("date");
 
 const filterCategory = document.getElementById("filterCategory");
+const startDateFilter = document.getElementById("startDateFilter");
+const endDateFilter = document.getElementById("endDateFilter");
+const clearDateFilters = document.getElementById("clearDateFilters");
 
 const addExpenseButton = document.getElementById("addExpense");
-
 
 const successModal = document.getElementById("successModal");
 const viewExpensesButton = document.getElementById("viewExpensesButton");
 const addAnotherButton = document.getElementById("addAnotherButton");
 
+// Edit Expense elements
+const editExpenseModal = document.getElementById("editExpenseModal");
+const editExpenseForm = document.getElementById("editExpenseForm");
+const editDescriptionInput = document.getElementById("editDescription");
+const editAmountInput = document.getElementById("editAmount");
+const editCategoryInput = document.getElementById("editCategory");
+const editDateInput = document.getElementById("editDate");
+const cancelEditButton = document.getElementById("cancelEditButton");
 
 let expenses = JSON.parse(localStorage.getItem("expenses")) || [];
+let editingExpenseIndex = null;
 
+
+// Save expenses to browser storage
+function saveExpenses() {
+    localStorage.setItem("expenses", JSON.stringify(expenses));
+}
+
+
+// Add a new expense
 addExpenseButton.addEventListener("click", function () {
-
     const description = descriptionInput.value.trim();
     const amount = Number(amountInput.value);
     const category = categoryInput.value;
@@ -27,7 +46,7 @@ addExpenseButton.addEventListener("click", function () {
         return;
     }
 
-    if (amount <= 0) {
+    if (!Number.isFinite(amount) || amount <= 0) {
         alert("Please enter an amount greater than 0.");
         return;
     }
@@ -37,18 +56,15 @@ addExpenseButton.addEventListener("click", function () {
         return;
     }
 
-    if (date === "") {
-        alert("Please select a valid date.");
-        return;
-    }
-
-
-    if (date < "1900-01-01" || date > "2100-12-31") {
+    if (
+        date === "" ||
+        date < "1900-01-01" ||
+        date > "2100-12-31"
+    ) {
         alert("Please select a date between 1900 and 2100.");
         return;
     }
 
-    
     const now = new Date();
 
     const recordedDate = [
@@ -65,34 +81,29 @@ addExpenseButton.addEventListener("click", function () {
         date: date
     };
 
+    expenses.unshift(expense);
 
     try {
-        expenses.unshift(expense);
+        saveExpenses();
+    } catch (error) {
+        expenses.shift();
+        alert("Unable to save the expense. Please try again.");
+        return;
+    }
 
-        localStorage.setItem("expenses", JSON.stringify(expenses));
-
-        
     displayExpenses();
 
-    // Clear the form after saving
     descriptionInput.value = "";
     amountInput.value = "";
     categoryInput.value = "";
     dateInput.value = "";
 
-    // Display the custom success popup
     successModal.hidden = false;
     viewExpensesButton.focus();
-
-
-    } catch (error) {
-        expenses.pop();
-        alert("Unable to save the expense. Please try again.");
-    }
-
 });
 
 
+// Display expenses using the selected category and Date Spent filters
 function displayExpenses() {
     const expensesContainer = document.getElementById("expenses");
     const totalAmountElement = document.getElementById("totalAmount");
@@ -102,12 +113,27 @@ function displayExpenses() {
     expensesContainer.innerHTML = "";
 
     const selectedCategory = filterCategory.value;
+    const startDate = startDateFilter.value;
+    const endDate = endDateFilter.value;
 
-    const filteredExpenses = selectedCategory === "All"
-        ? expenses
-        : expenses.filter(function (expense) {
-            return expense.category === selectedCategory;
-        });
+    const filteredExpenses = expenses.filter(function (expense) {
+        const matchesCategory =
+            selectedCategory === "All" ||
+            expense.category === selectedCategory;
+
+        // expense.date represents Date Spent, not Date Recorded.
+        const matchesStartDate =
+            startDate === "" || expense.date >= startDate;
+
+        const matchesEndDate =
+            endDate === "" || expense.date <= endDate;
+
+        return (
+            matchesCategory &&
+            matchesStartDate &&
+            matchesEndDate
+        );
+    });
 
     let total = 0;
 
@@ -116,13 +142,11 @@ function displayExpenses() {
 
         const row = document.createElement("tr");
 
-        
         const recordedDateCell = document.createElement("td");
         recordedDateCell.textContent = expense.recordedDate || "—";
 
         const dateCell = document.createElement("td");
         dateCell.textContent = expense.date;
-
 
         const descriptionCell = document.createElement("td");
         descriptionCell.textContent = expense.description;
@@ -137,19 +161,37 @@ function displayExpenses() {
         );
 
         const actionCell = document.createElement("td");
-        const deleteButton = document.createElement("button");
 
+        // Edit button
+        const editButton = document.createElement("button");
+        editButton.textContent = "Edit";
+        editButton.className = "edit-button";
+        editButton.type = "button";
+
+        editButton.addEventListener("click", function () {
+            const actualIndex = expenses.indexOf(expense);
+
+            if (actualIndex !== -1) {
+                openEditModal(actualIndex);
+            }
+        });
+
+        // Delete button
+        const deleteButton = document.createElement("button");
         deleteButton.textContent = "Delete";
         deleteButton.className = "delete-button";
+        deleteButton.type = "button";
 
         deleteButton.addEventListener("click", function () {
             const actualIndex = expenses.indexOf(expense);
-            deleteExpense(actualIndex);
+
+            if (actualIndex !== -1) {
+                deleteExpense(actualIndex);
+            }
         });
 
-        actionCell.appendChild(deleteButton);
+        actionCell.append(editButton, deleteButton);
 
-        
         row.append(
             recordedDateCell,
             dateCell,
@@ -158,7 +200,6 @@ function displayExpenses() {
             amountCell,
             actionCell
         );
-
 
         expensesContainer.appendChild(row);
     });
@@ -169,33 +210,187 @@ function displayExpenses() {
     });
 
     expenseCountElement.textContent =
-        filteredExpenses.length + (
-            filteredExpenses.length === 1 ? " expense" : " expenses"
-        );
+        filteredExpenses.length +
+        (filteredExpenses.length === 1 ? " expense" : " expenses");
 
     emptyMessage.hidden = filteredExpenses.length !== 0;
 }
 
-displayExpenses();
 
+// Re-render when filters change
 filterCategory.addEventListener("change", displayExpenses);
 
-function deleteExpense(index) {
+startDateFilter.addEventListener("change", function () {
+    validateDateRange("start");
+});
 
-    expenses.splice(index, 1);
+endDateFilter.addEventListener("change", function () {
+    validateDateRange("end");
+});
 
-    localStorage.setItem("expenses", JSON.stringify(expenses));
+function validateDateRange(changedField) {
+    const startDate = startDateFilter.value;
+    const endDate = endDateFilter.value;
+
+    if (startDate && endDate && startDate > endDate) {
+        alert("The start date cannot be later than the end date.");
+
+        if (changedField === "start") {
+            endDateFilter.value = "";
+        } else {
+            startDateFilter.value = "";
+        }
+    }
 
     displayExpenses();
-
 }
 
 
+// Clear both date filters without changing the category filter
+clearDateFilters.addEventListener("click", function () {
+    startDateFilter.value = "";
+    endDateFilter.value = "";
 
+    displayExpenses();
+});
+
+
+// Open the Edit Expense modal
+function openEditModal(index) {
+    const expense = expenses[index];
+
+    if (!expense) {
+        return;
+    }
+
+    editingExpenseIndex = index;
+
+    editDescriptionInput.value = expense.description;
+    editAmountInput.value = expense.amount;
+    editCategoryInput.value = expense.category;
+    editDateInput.value = expense.date;
+
+    editExpenseModal.hidden = false;
+    editDescriptionInput.focus();
+}
+
+
+// Save edits to the existing expense
+editExpenseForm.addEventListener("submit", function (event) {
+    event.preventDefault();
+
+    if (
+        editingExpenseIndex === null ||
+        !expenses[editingExpenseIndex]
+    ) {
+        alert("Unable to find this expense. Please try again.");
+        closeEditModal();
+        return;
+    }
+
+    const description = editDescriptionInput.value.trim();
+    const amount = Number(editAmountInput.value);
+    const category = editCategoryInput.value;
+    const date = editDateInput.value;
+
+    if (description === "") {
+        alert("Please enter a description.");
+        editDescriptionInput.focus();
+        return;
+    }
+
+    if (!Number.isFinite(amount) || amount <= 0) {
+        alert("Please enter an amount greater than 0.");
+        editAmountInput.focus();
+        return;
+    }
+
+    if (category === "") {
+        alert("Please select a category.");
+        editCategoryInput.focus();
+        return;
+    }
+
+    if (
+        date === "" ||
+        date < "1900-01-01" ||
+        date > "2100-12-31"
+    ) {
+        alert("Please select a date between 1900 and 2100.");
+        editDateInput.focus();
+        return;
+    }
+
+    const expense = expenses[editingExpenseIndex];
+
+    // Keep the original recordedDate unchanged.
+    const originalValues = {
+        description: expense.description,
+        amount: expense.amount,
+        category: expense.category,
+        date: expense.date
+    };
+
+    expense.description = description;
+    expense.amount = amount;
+    expense.category = category;
+    expense.date = date;
+
+    try {
+        saveExpenses();
+    } catch (error) {
+        // Restore the previous values if saving fails.
+        Object.assign(expense, originalValues);
+
+        alert("Unable to save your changes. Please try again.");
+        return;
+    }
+
+    closeEditModal();
+    displayExpenses();
+});
+
+
+// Close the Edit Expense modal
+function closeEditModal() {
+    editExpenseModal.hidden = true;
+    editingExpenseIndex = null;
+    editExpenseForm.reset();
+}
+
+cancelEditButton.addEventListener("click", closeEditModal);
+
+editExpenseModal.addEventListener("click", function (event) {
+    if (event.target === editExpenseModal) {
+        closeEditModal();
+    }
+});
+
+
+// Delete an expense
+function deleteExpense(index) {
+    if (index < 0 || index >= expenses.length) {
+        return;
+    }
+
+    const deletedExpense = expenses.splice(index, 1)[0];
+
+    try {
+        saveExpenses();
+    } catch (error) {
+        expenses.splice(index, 0, deletedExpense);
+        alert("Unable to delete the expense. Please try again.");
+        return;
+    }
+
+    displayExpenses();
+}
+
+
+// Restore the last section viewed after a page refresh
 const addSection = document.getElementById("addExpenseSection");
 const recordsSection = document.getElementById("expensesSection");
 
-// Restore the last section viewed after a page refresh
 const savedSection = localStorage.getItem("activeSection");
 
 if (savedSection === "expenses") {
@@ -206,7 +401,8 @@ if (savedSection === "expenses") {
     recordsSection.hidden = true;
 }
 
-// Show the Add Expense section and remember the choice
+
+// Show the Add Expense section
 document.getElementById("showAddSection").addEventListener("click", function () {
     recordsSection.hidden = true;
     addSection.hidden = false;
@@ -214,7 +410,8 @@ document.getElementById("showAddSection").addEventListener("click", function () 
     localStorage.setItem("activeSection", "add");
 });
 
-// Show the My Expenses section and remember the choice
+
+// Show the My Expenses section
 document.getElementById("showExpensesSection").addEventListener("click", function () {
     addSection.hidden = true;
     recordsSection.hidden = false;
@@ -225,6 +422,7 @@ document.getElementById("showExpensesSection").addEventListener("click", functio
 });
 
 
+// Success modal: View Expenses
 viewExpensesButton.addEventListener("click", function () {
     successModal.hidden = true;
 
@@ -236,29 +434,29 @@ viewExpensesButton.addEventListener("click", function () {
     displayExpenses();
 });
 
+
+// Success modal: Add Another Expense
 addAnotherButton.addEventListener("click", function () {
     successModal.hidden = true;
     descriptionInput.focus();
 });
 
 
+// About Developer modal
 const aboutModal = document.getElementById("aboutModal");
 const showAboutButton = document.getElementById("showAboutButton");
 const aboutCloseButton = document.getElementById("aboutCloseButton");
 
-// Open the About Developer popup
 showAboutButton.addEventListener("click", function () {
     aboutModal.hidden = false;
     aboutCloseButton.focus();
 });
 
-// Close the popup
 aboutCloseButton.addEventListener("click", function () {
     aboutModal.hidden = true;
     showAboutButton.focus();
 });
 
-// Close when clicking outside the popup
 aboutModal.addEventListener("click", function (event) {
     if (event.target === aboutModal) {
         aboutModal.hidden = true;
@@ -266,10 +464,19 @@ aboutModal.addEventListener("click", function (event) {
     }
 });
 
-// Close when the Escape key is pressed
+
+// Escape closes open modals
 document.addEventListener("keydown", function (event) {
-    if (event.key === "Escape" && !aboutModal.hidden) {
-        aboutModal.hidden = true;
-        showAboutButton.focus();
+    if (event.key === "Escape") {
+        if (!editExpenseModal.hidden) {
+            closeEditModal();
+        } else if (!aboutModal.hidden) {
+            aboutModal.hidden = true;
+            showAboutButton.focus();
+        }
     }
 });
+
+
+// Display the existing records on startup
+displayExpenses();

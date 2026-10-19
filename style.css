@@ -439,3 +439,136 @@ td:nth-child(5) {
 #aboutCloseButton:hover {
     background: #163b72;
 }
+
+
+/* Date Spent filters */
+.date-filter {
+    display: flex;
+    align-items: end;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 16px 0 24px;
+}
+
+.date-filter-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+    min-width: 150px;
+}
+
+.date-filter-field label {
+    font-weight: 600;
+}
+
+.date-filter-field input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+}
+
+#clearDateFilters,
+.edit-expense-actions button {
+    padding: 10px 14px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+#clearDateFilters,
+.save-edit-button {
+    background: #1d4ed8;
+    color: white;
+}
+
+#clearDateFilters:hover,
+.save-edit-button:hover {
+    background: #163b72;
+}
+
+/* Edit expense form */
+.edit-expense-modal {
+    width: 100%;
+    max-width: 440px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-sizing: border-box;
+}
+
+.edit-expense-modal form {
+    text-align: left;
+}
+
+.edit-expense-modal label {
+    display: block;
+    margin: 12px 0 6px;
+    font-weight: 600;
+}
+
+.edit-expense-modal input,
+.edit-expense-modal select {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font: inherit;
+}
+
+.edit-expense-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.edit-expense-actions button {
+    flex: 1;
+}
+
+.cancel-edit-button {
+    background: #e2e8f0;
+    color: #1e293b;
+}
+
+.cancel-edit-button:hover {
+    background: #cbd5e1;
+}
+
+@media (max-width: 500px) {
+    .date-filter {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .date-filter-field {
+        min-width: 0;
+    }
+
+    .edit-expense-actions {
+        flex-direction: column;
+    }
+}
+
+
+/* Edit button in the expenses table */
+.edit-button {
+    background: #2563eb;
+    color: white;
+    border: none;
+    padding: 7px 12px;
+    margin: 3px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.edit-button:hover {
+    background: #1e40af;
+}
+
+/* Keep both action buttons easy to use */
+.delete-button {
+    margin: 3px;
+}
